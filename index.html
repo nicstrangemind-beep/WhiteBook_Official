@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Путь Воина: Интерактивное Руководство</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Zen Garden -->
+    <!-- Application Structure Plan: The SPA is designed as a "path" or journey, with four distinct, interactive sections corresponding to the four "arts" in the report. This thematic, vertical-scrolling structure with a sticky top navigation allows for both linear progression and direct access to specific concepts. This is more user-friendly than a simple text document because it breaks down the philosophical guide into manageable, interactive modules. Each module uses interactive elements (like a simulated log, a breathing guide, toggles, and diagrams) to transform abstract principles into practical, understandable exercises, facilitating deeper user engagement and comprehension. The final radar chart serves as a holistic summary of the integrated practice. -->
+    <!-- Visualization & Content Choices: 
+        - Report Intro -> Goal: Set the stage -> Presentation: Hero section with key text -> Interaction: None -> Justification: Provides immediate context. -> Method: HTML/Tailwind.
+        - Art of Stalking -> Goal: Teach self-observation -> Presentation: Interactive cards & a simulated 'Reaction Log' text area -> Interaction: Clickable cards, text input -> Justification: Makes the abstract concept of cataloging tangible and practical. -> Method: HTML/Tailwind/JS.
+        - Art of Stopping the World -> Goal: Teach dis-identification -> Presentation: CSS-animated breathing visualizer -> Interaction: Visual guidance for a meditative practice -> Justification: Offers a practical tool for the 'inner silence' concept, more effective than text alone. -> Method: HTML/Tailwind/CSS.
+        - Art of Acceptance -> Goal: Teach 'Amor Fati' -> Presentation: Interactive toggle switch -> Interaction: Click to change state and descriptive text -> Justification: Visually represents the mental shift from 'resistance' to 'acceptance'. -> Method: HTML/Tailwind/JS.
+        - Art of Intent -> Goal: Visualize conscious action -> Presentation: HTML/CSS flow diagram & Chart.js radar chart -> Interaction: The chart provides a visual summary -> Justification: The diagram clarifies the process of choice, and the chart holistically visualizes the goal of 'impeccability'. -> Library/Method: HTML/Tailwind, Chart.js/Canvas. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #403A35;
+        }
+        .nav-link.active {
+            color: #D97706;
+            font-weight: 700;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #F3F0EC;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .breathing-circle {
+            width: 150px;
+            height: 150px;
+            background-color: #A5B4FC;
+            border-radius: 50%;
+            animation: breathe 8s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+        }
+        @keyframes breathe {
+            0% { transform: scale(0.8); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0.7; }
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="sticky top-0 bg-white/80 backdrop-blur-md z-50 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-amber-700">Путь Воина</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div id="nav-links" class="ml-10 flex items-baseline space-x-4">
+                        <a href="#stalking" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-amber-600 transition-colors">1. Сталкинг</a>
+                        <a href="#stopping" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-amber-600 transition-colors">2. Остановка</a>
+                        <a href="#acceptance" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-amber-600 transition-colors">3. Принятие</a>
+                        <a href="#intent" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-amber-600 transition-colors">4. Намерение</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="intro" class="py-20 md:py-28 bg-amber-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-amber-900">Интеграция Знаний в Жизнь</h2>
+                <p class="mt-6 max-w-3xl mx-auto text-lg leading-8 text-amber-800">Мы прошли путь от деконструкции мира до анализа операционной системы «Я». Теперь теория должна стать плотью. Это — практическое руководство по интеграции этих знаний в ткань повседневной жизни.</p>
+                <a href="#stalking" class="mt-8 inline-block bg-amber-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-amber-700 transition-colors">Начать Путь</a>
+            </div>
+        </section>
+
+        <section id="stalking" class="py-16 md:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <p class="text-base font-semibold text-amber-600">Шаг Первый</p>
+                    <h3 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">1. Искусство Сталкинга: Беспощадная Инвентаризация</h3>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">Первый шаг — это тотальное и честное самонаблюдение. Воин становится сталкером для самого себя, составляя карту своих внутренних территорий.</p>
+                </div>
+
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="card p-6 rounded-lg">
+                        <h4 class="text-lg font-bold">Наблюдайте за реакциями</h4>
+                        <p class="mt-2 text-gray-600">Не так важно, *что* произошло. Важно, *какая программа запустилась внутри вас*. Какую эмоцию вы испытали? Гнев, гордыню, страх?</p>
+                    </div>
+                    <div class="card p-6 rounded-lg">
+                        <h4 class="text-lg font-bold">Ищите триггеры</h4>
+                        <p class="mt-2 text-gray-600">Какие именно слова, ситуации или люди запускают в вас самые сильные автоматические реакции? Это — ключи к вашим программам.</p>
+                    </div>
+                    <div class="card p-6 rounded-lg">
+                        <h4 class="text-lg font-bold">Не судите, а каталогизируйте</h4>
+                        <p class="mt-2 text-gray-600">Нет «хороших» или «плохих» реакций. Будьте инженером, который изучает чертежи машины. «Ага, вот программа 'Обида 2.0'».</p>
+                    </div>
+                </div>
+
+                <div class="mt-12 p-8 bg-white rounded-lg shadow-sm border border-gray-200">
+                    <h4 class="text-xl font-bold text-center">Практика: Журнал Реакций</h4>
+                    <p class="text-center mt-2 text-gray-600">Попробуйте описать ситуацию, триггер и вашу автоматическую реакцию без осуждения.</p>
+                    <textarea id="reactionLog" class="mt-4 w-full h-32 p-3 border rounded-md focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition" placeholder="Пример: Ситуация - коллега раскритиковал мою работу. Триггер - слова 'это можно было сделать лучше'. Реакция - вспышка гнева, желание защищаться, ощущение несправедливости."></textarea>
+                    <div class="text-center mt-4">
+                        <button id="clearLogBtn" class="bg-gray-200 text-gray-700 font-semibold py-2 px-6 rounded-lg hover:bg-gray-300 transition-colors">Очистить</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="stopping" class="py-16 md:py-24 bg-gray-50">
+             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <p class="text-base font-semibold text-indigo-600">Шаг Второй</p>
+                    <h3 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">2. Искусство Остановки Мира: Раз-отождествление</h3>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">Когда карта составлена, начинается следующий этап. Его цель — создать зазор между наблюдателем (вами) и наблюдаемым (программой).</p>
+                </div>
+                <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <div class="space-y-6">
+                            <div class="card p-6 rounded-lg">
+                                <h4 class="text-lg font-bold">Мантра: «Это не я, это во мне»</h4>
+                                <p class="mt-2 text-gray-600">Гнев, который вы чувствуете, — это не вы. Это химическая и энергетическая реакция. Вы — тот, кто это наблюдает.</p>
+                            </div>
+                             <div class="card p-6 rounded-lg">
+                                <h4 class="text-lg font-bold">Практика «внутренней тишины»</h4>
+                                <p class="mt-2 text-gray-600">Учитесь останавливать внутренний диалог — бесконечную говорильню ума, которая подпитывает каждую реакцию.</p>
+                            </div>
+                             <div class="card p-6 rounded-lg">
+                                <h4 class="text-lg font-bold">Стирание личной истории</h4>
+                                <p class="mt-2 text-gray-600">Перестаньте рассказывать истории о том, «какой вы человек». Вы — не ваша история. Вы — тот, кто находится здесь и сейчас.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center justify-center p-8 bg-white rounded-lg shadow-sm border border-gray-200 min-h-[300px]">
+                         <h4 class="text-xl font-bold text-center mb-4">Упражнение на Дыхание</h4>
+                         <div class="breathing-circle">
+                            <span id="breath-text">Вдох</span>
+                         </div>
+                         <p class="mt-4 text-gray-500 text-sm">Синхронизируйте дыхание с анимацией.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="acceptance" class="py-16 md:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                 <div class="text-center">
+                    <p class="text-base font-semibold text-teal-600">Шаг Третий</p>
+                    <h3 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">3. Искусство Принятия: Amor Fati</h3>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">Самый парадоксальный и мощный этап. Вместо того чтобы бороться со своими «негативными» программами, вы принимаете их.</p>
+                </div>
+                <div class="mt-12 max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div class="flex-1">
+                             <h4 id="acceptance-title" class="text-2xl font-bold text-red-600 transition-colors duration-500">Борьба с Тенью</h4>
+                             <p id="acceptance-text" class="mt-4 text-gray-600 transition-opacity duration-500">Когда мы боремся со своими реакциями, мы лишь делаем их сильнее. Энергия уходит на внутренний конфликт, укрепляя программы, от которых мы хотим избавиться.</p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <label for="acceptance-toggle" class="flex items-center cursor-pointer">
+                                <div class="relative">
+                                    <input type="checkbox" id="acceptance-toggle" class="sr-only">
+                                    <div class="block bg-gray-300 w-14 h-8 rounded-full transition-colors duration-300"></div>
+                                    <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300"></div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mt-8 border-t pt-6">
+                        <h4 class="text-lg font-bold">Ключевые принципы:</h4>
+                        <ul class="mt-4 space-y-2 list-disc list-inside text-gray-700">
+                            <li><span class="font-semibold">Любите свою судьбу (и прошивку):</span> Ваши реакции — механизм выживания. Поблагодарите их за службу.</li>
+                             <li><span class="font-semibold">Контролируемая глупость:</span> Играйте свои роли в социальном спектакле, но внутри оставайтесь свободным, зная, что это всего лишь игра.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="intent" class="py-16 md:py-24 bg-gray-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                 <div class="text-center">
+                    <p class="text-base font-semibold text-fuchsia-600">Шаг Четвертый</p>
+                    <h3 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">4. Искусство Намерения: Перенаправление Энергии</h3>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">Когда энергия перестает тратиться на автоматизмы, она высвобождается. Теперь ее можно направить.</p>
+                </div>
+
+                <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div class="p-8 bg-white rounded-lg shadow-sm border border-gray-200">
+                        <h4 class="text-xl font-bold text-center">От Реакции к Действию</h4>
+                        <div class="mt-6 flex items-center justify-center space-x-2 text-center">
+                            <div class="p-3 bg-red-100 text-red-800 rounded-lg">Триггер</div>
+                            <div class="text-gray-400 font-mono">-></div>
+                             <div class="p-3 bg-gray-100 text-gray-800 rounded-lg">Автоматическая Реакция</div>
+                        </div>
+                         <div class="mt-6 flex items-center justify-center space-x-2 text-center">
+                            <div class="p-3 bg-green-100 text-green-800 rounded-lg">Триггер</div>
+                            <div class="text-gray-400 font-mono">-></div>
+                            <div class="p-3 border-2 border-dashed border-green-400 bg-green-50 text-green-800 rounded-lg font-bold">ПРОСТРАНСТВО ВЫБОРА</div>
+                            <div class="text-gray-400 font-mono">-></div>
+                             <div class="p-3 bg-green-100 text-green-800 rounded-lg">Осознанное Действие</div>
+                        </div>
+                        <p class="mt-6 text-gray-600">Между триггером и поступком появляется пространство, созданное тремя предыдущими искусствами. В этом пространстве вы делаете выбор.</p>
+                    </div>
+
+                    <div class="p-8 bg-white rounded-lg shadow-sm border border-gray-200">
+                        <h4 class="text-xl font-bold text-center">Визуализация Безупречности</h4>
+                        <p class="text-center mt-2 text-gray-600">Безупречность — это баланс всех четырех искусств в каждый момент времени.</p>
+                        <div class="chart-container mt-4">
+                            <canvas id="impeccabilityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white">
+        <div class="container mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
+            <h3 class="text-2xl font-bold">Путь никогда не кончается</h3>
+            <p class="mt-4 max-w-2xl mx-auto text-gray-300">Это не путь, который можно пройти однажды. Это ежедневная, ежеминутная практика. Это и есть превращение своей жизни из бесконечного вращения реакций в произведение искусства, которое вы с радостью готовы были бы проживать вечно.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('#nav-links a');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: '-50% 0px -50% 0px' });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+            
+            const clearLogBtn = document.getElementById('clearLogBtn');
+            const reactionLog = document.getElementById('reactionLog');
+            if (clearLogBtn && reactionLog) {
+                clearLogBtn.addEventListener('click', () => {
+                    reactionLog.value = '';
+                });
+            }
+
+            const breathText = document.getElementById('breath-text');
+            if (breathText) {
+                setInterval(() => {
+                    breathText.textContent = breathText.textContent === 'Вдох' ? 'Выдох' : 'Вдох';
+                }, 4000);
+            }
+
+            const acceptanceToggle = document.getElementById('acceptance-toggle');
+            const acceptanceTitle = document.getElementById('acceptance-title');
+            const acceptanceText = document.getElementById('acceptance-text');
+            const toggleDot = document.querySelector('#acceptance-toggle + div + div');
+            if (acceptanceToggle && acceptanceTitle && acceptanceText && toggleDot) {
+                acceptanceToggle.addEventListener('change', () => {
+                    if (acceptanceToggle.checked) {
+                        acceptanceTitle.textContent = 'Принятие и *Amor Fati*';
+                        acceptanceTitle.classList.remove('text-red-600');
+                        acceptanceTitle.classList.add('text-teal-600');
+                        acceptanceText.textContent = 'Принимая свои реакции, мы обретаем свободу. Энергия больше не тратится на борьбу, а может быть направлена на осознанное действие. Это и есть любовь к своей судьбе.';
+                        toggleDot.style.transform = 'translateX(24px)';
+                        toggleDot.previousElementSibling.classList.remove('bg-gray-300');
+                        toggleDot.previousElementSibling.classList.add('bg-teal-500');
+
+                    } else {
+                        acceptanceTitle.textContent = 'Борьба с Тенью';
+                        acceptanceTitle.classList.remove('text-teal-600');
+                        acceptanceTitle.classList.add('text-red-600');
+                        acceptanceText.textContent = 'Когда мы боремся со своими реакциями, мы лишь делаем их сильнее. Энергия уходит на внутренний конфликт, укрепляя программы, от которых мы хотим избавиться.';
+                        toggleDot.style.transform = 'translateX(0)';
+                        toggleDot.previousElementSibling.classList.add('bg-gray-300');
+                        toggleDot.previousElementSibling.classList.remove('bg-teal-500');
+                    }
+                });
+            }
+
+            const ctx = document.getElementById('impeccabilityChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Сталкинг (Наблюдение)', 'Остановка (Раз-отождествление)', 'Принятие (Amor Fati)', 'Намерение (Действие)'],
+                        datasets: [{
+                            label: 'Уровень Безупречности',
+                            data: [9, 8, 9, 8],
+                            fill: true,
+                            backgroundColor: 'rgba(192, 132, 252, 0.2)',
+                            borderColor: 'rgb(192, 132, 252)',
+                            pointBackgroundColor: 'rgb(192, 132, 252)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(192, 132, 252)'
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                angleLines: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                },
+                                suggestedMin: 0,
+                                suggestedMax: 10,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                },
+                                pointLabels: {
+                                    font: {
+                                        size: 12
+                                    },
+                                    color: '#403A35'
+                                },
+                                ticks: {
+                                    backdropColor: 'rgba(255, 255, 255, 0.75)',
+                                    color: '#888'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
